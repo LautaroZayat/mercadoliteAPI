@@ -1,17 +1,26 @@
 // db.js
-import pkg from "pg";
-import dotenv from "dotenv";
-dotenv.config();
+import 'dotenv/config';
+import { neon } from '@neondatabase/serverless';
 
-const { Pool } = pkg;
+// Creamos la conexión usando la variable del .env
+const sql = neon(process.env.DATABASE_URL);
 
-const pool = new Pool({
-  host: process.env.PGHOST,
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE,
-  port: process.env.PGPORT || 5432,
-  ssl: { rejectUnauthorized: false } // necesario para Neon
-});
+// Función para ejecutar queries fácilmente
+export async function query(text, params = []) {
+  try {
+    // Si no hay parámetros, ejecuta directo
+    if (params.length === 0) {
+      return await sql`${text}`;
+    } else {
+      // Si hay parámetros, usa modo unsafe (seguro igual)
+      const result = await sql.unsafe(text, params);
+      return result;
+    }
+  } catch (err) {
+    console.error('❌ Error en la query:', err);
+    throw err;
+  }
+}
 
-export default pool;
+export default sql;
+
