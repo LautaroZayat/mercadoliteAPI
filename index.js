@@ -2,14 +2,13 @@
 import express from 'express';
 import 'dotenv/config';
 import { neon } from '@neondatabase/serverless';
+import userRoutes from './routes/user.routes.js';
 
 const app = express();
 app.use(express.json());
 
-// Conexión Neon
 const sql = neon(process.env.DATABASE_URL);
 
-// Endpoint de prueba DB
 app.get('/test-db', async (req, res) => {
   try {
     const r = await sql`SELECT NOW() as now`;
@@ -20,6 +19,10 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-// Levantar server
+// Montamos las rutas de usuario en la raíz
+app.use('/', userRoutes);
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 API escuchando en http://localhost:${PORT}`));
+app.listen(PORT, () =>
+  console.log(`🚀 API escuchando en http://localhost:${PORT}`)
+);

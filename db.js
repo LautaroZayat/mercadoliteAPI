@@ -2,20 +2,24 @@
 import 'dotenv/config';
 import { neon } from '@neondatabase/serverless';
 
-// Creamos la conexión usando la variable del .env
+// Crea la conexión con Neon
 const sql = neon(process.env.DATABASE_URL);
 
-// Función para ejecutar queries fácilmente
+// Helper para hacer queries con o sin parámetros
 export async function query(text, params = []) {
   try {
-    // Si no hay parámetros, ejecuta directo
-    if (params.length === 0) {
-      return await sql`${text}`;
+    let rows;
+
+    if (!params || params.length === 0) {
+      // Sin parámetros → solo el string
+      rows = await sql(text);
     } else {
-      // Si hay parámetros, usa modo unsafe (seguro igual)
-      const result = await sql.unsafe(text, params);
-      return result;
+      // Con parámetros → string + array de valores
+      rows = await sql(text, params);
     }
+
+    // sql(...) devuelve directamente un array de filas
+    return rows;
   } catch (err) {
     console.error('❌ Error en la query:', err);
     throw err;
@@ -23,4 +27,3 @@ export async function query(text, params = []) {
 }
 
 export default sql;
-
