@@ -1,13 +1,22 @@
 // routes/user.routes.js
 import { Router } from 'express';
-import { ping, registro } from '../controllers/user.controller.js';
+import {
+  ping,
+  registro,
+  login,
+  transferir,
+  saldo,
+} from '../controllers/user.controller.js';
+import { verifyToken } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-// GET /ping
 router.get('/ping', ping);
-
-// POST /registro
 router.post('/registro', registro);
+router.post('/login', login);
+router.post('/transferir', verifyToken, transferir);
+
+// 🟢 nueva ruta protegida: ver saldo
+router.get('/saldo', verifyToken, saldo);
 
 export default router;

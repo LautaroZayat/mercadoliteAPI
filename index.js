@@ -3,6 +3,7 @@ import express from 'express';
 import 'dotenv/config';
 import { neon } from '@neondatabase/serverless';
 import userRoutes from './routes/user.routes.js';
+import historialRoutes from './routes/historial.routes.js'; // 👈 nuevo
 
 const app = express();
 app.use(express.json());
@@ -19,8 +20,9 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-// Montamos las rutas de usuario en la raíz
+// Montamos ambas "familias" de rutas
 app.use('/', userRoutes);
+app.use('/', historialRoutes); // 👈 esto agrega /historial
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
