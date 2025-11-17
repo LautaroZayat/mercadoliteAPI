@@ -4,7 +4,6 @@ import 'dotenv/config';
 import { neon } from '@neondatabase/serverless';
 import userRoutes from './routes/user.routes.js';
 import historialRoutes from './routes/historial.routes.js'; // 👈 nuevo
-import serverless from 'serverless-http';
 
 const app = express();
 app.use(express.json());
@@ -41,14 +40,7 @@ app.get('/', (req, res) => {
   res.send('MercadoLiteAPI funcionando correctamente!');
 });
 
-// En entornos serverless (Vercel) no debemos llamar a app.listen().
-// Exportamos un handler compatible con Vercel usando serverless-http.
-if (!process.env.VERCEL) {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () =>
-    console.log(`🚀 API escuchando en http://localhost:${PORT}`)
-  );
-}
-
-// Export default handler para plataformas serverless (Vercel).
-export default serverless(app);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =>
+  console.log(`🚀 API escuchando en http://localhost:${PORT}`)
+);
