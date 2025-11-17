@@ -5,6 +5,7 @@ import {
   verificarLogin,
   transferirSaldo,
   obtenerSaldo,
+  obtenerUsuarioPorId,
 
 } from '../services/user.service.js';
 
@@ -106,8 +107,14 @@ export const saldo = async (req, res) => {
 
     const saldoActual = await obtenerSaldo(idUsuario);
 
+    const usuario = await obtenerUsuarioPorId(idUsuario);
+    
     return res.json({
       saldo: saldoActual,
+      nombre: usuario.nombre,
+      email: usuario.email,
+      cbu: usuario.cbu,
+      alias: usuario.alias
     });
   } catch (err) {
     console.error('❌ Error en /saldo:', err);

@@ -160,3 +160,10 @@ export async function obtenerSaldo(idUsuario) {
   return result.rows[0].saldo;
 }
 
+export const obtenerUsuarioPorId = async (id) => {
+  const res = await client.query(
+    'SELECT nombre, email, alias, cbu FROM usuarios WHERE id=$1',
+    [id]
+  );
+  return res.rows[0];
+};
