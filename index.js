@@ -8,12 +8,24 @@ import historialRoutes from './routes/historial.routes.js'; // 👈 nuevo
 const app = express();
 app.use(express.json());
 
-const sql = neon(process.env.DATABASE_URL);
+// const sql = neon(process.env.DATABASE_URL);
+
+// app.get('/test-db', async (req, res) => {
+//   try {
+//     const r = await sql`SELECT NOW() as now`;
+//     res.json({ conectado: true, now: r[0].now });
+//   } catch (e) {
+//     console.error('DB error:', e);
+//     res.status(500).json({ conectado: false, error: e.message });
+//   }
+// }); INTENTO DE QUE FUNCIONE LA DB
+
+import { client } from './db.js'; // o la ruta donde tengas el Client
 
 app.get('/test-db', async (req, res) => {
   try {
-    const r = await sql`SELECT NOW() as now`;
-    res.json({ conectado: true, now: r[0].now });
+    const result = await client.query("SELECT NOW() as now");
+    res.json({ conectado: true, now: result.rows[0].now });
   } catch (e) {
     console.error('DB error:', e);
     res.status(500).json({ conectado: false, error: e.message });
