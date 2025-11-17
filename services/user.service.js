@@ -1,10 +1,10 @@
 // services/user.service.js
-import { query } from '../db.js';
+import { client } from '../db.js';
 
 // 🟢 Registro con "contraseña"
 export async function registrarUsuario({ nombre, email, alias, contraseña }) {
   // Verificar email existente
-  const existeEmail = await query(
+  const existeEmail = await client(
     'SELECT id FROM usuarios WHERE email = $1',
     [email]
   );
@@ -15,7 +15,7 @@ export async function registrarUsuario({ nombre, email, alias, contraseña }) {
   }
 
   // Verificar alias existente
-  const existeAlias = await query(
+  const existeAlias = await client(
     'SELECT id FROM usuarios WHERE alias = $1',
     [alias]
   );
@@ -26,7 +26,7 @@ export async function registrarUsuario({ nombre, email, alias, contraseña }) {
   }
 
   // Insertar usuario → columna: "contraseña"
-  const rows = await query(
+  const rows = await client(
     `INSERT INTO usuarios (nombre, email, alias, "contraseña", saldo)
      VALUES ($1, $2, $3, $4, $5)
      RETURNING id, nombre, email, alias, cbu, saldo`,
@@ -38,7 +38,7 @@ export async function registrarUsuario({ nombre, email, alias, contraseña }) {
 
 // 🟢 Login con "contraseña"
 export async function verificarLogin(email, contraseña) {
-  const rows = await query(
+  const rows = await client(
     `SELECT id, nombre, email, alias, cbu, saldo, "contraseña"
      FROM usuarios
      WHERE email = $1`,
@@ -75,7 +75,7 @@ export async function transferirSaldo({ origenId, destinoAlias, monto }) {
   }
 
   // Encontrar destino
-  const destinoRows = await query(
+  const destinoRows = await client(
     'SELECT id, saldo FROM usuarios WHERE alias = $1',
     [destinoAlias]
   );
@@ -95,7 +95,7 @@ export async function transferirSaldo({ origenId, destinoAlias, monto }) {
   }
 
   // Debitar del origen solo si alcanza el saldo
-  const debitoRows = await query(
+  const debitoRows = await client(
     `UPDATE usuarios
      SET saldo = saldo - $2
      WHERE id = $1 AND saldo >= $2
@@ -112,7 +112,7 @@ export async function transferirSaldo({ origenId, destinoAlias, monto }) {
   const origenActualizado = debitoRows[0];
 
   // Acreditar en destino
-  const creditoRows = await query(
+  const creditoRows = await client(
     `UPDATE usuarios
      SET saldo = saldo + $2
      WHERE id = $1
@@ -125,7 +125,7 @@ export async function transferirSaldo({ origenId, destinoAlias, monto }) {
   // Registrar transferencia (si tenés la tabla)
   let transferencia = null;
   try {
-    const rows = await query(
+    const rows = await client(
       `INSERT INTO transferencias (emisor_id, receptor_id, monto, fecha)
        VALUES ($1, $2, $3, NOW())
        RETURNING id, emisor_id, receptor_id, monto, fecha`,
@@ -146,7 +146,7 @@ export async function transferirSaldo({ origenId, destinoAlias, monto }) {
 // ...
 
 export async function obtenerSaldo(idUsuario) {
-  const rows = await query(
+  const rows = await client(
     'SELECT saldo FROM usuarios WHERE id = $1',
     [idUsuario]
   );

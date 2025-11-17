@@ -2,8 +2,19 @@
   "name": "mercadoliteapi",
   "version": "1.0.0",
   "description": "API del proyecto MercadoLite",
-  "main": "index.js",
+  "keywords": [],
+  "homepage": "https://github.com/LautaroZayat/mercadoliteAPI#readme",
+  "bugs": {
+    "url": "https://github.com/LautaroZayat/mercadoliteAPI/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LautaroZayat/mercadoliteAPI.git"
+  },
+  "license": "ISC",
+  "author": "",
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
@@ -15,20 +26,10 @@
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "neon": "^2.0.0"
+    "neon": "^2.0.0",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LautaroZayat/mercadoliteAPI.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/LautaroZayat/mercadoliteAPI/issues"
-  },
-  "homepage": "https://github.com/LautaroZayat/mercadoliteAPI#readme"
+  }
 }

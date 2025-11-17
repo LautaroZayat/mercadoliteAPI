@@ -1,8 +1,8 @@
 // services/historial.service.js
-import { query } from '../db.js';
+import { client } from '../db.js';
 
 export async function obtenerHistorial(idUsuario) {
-  const rows = await query(
+  const rows = await client(
     `SELECT 
         h.id,
         h.transferencia_id,
