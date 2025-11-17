@@ -1,11 +1,13 @@
 // index.js
 import express from 'express';
+import cors from 'cors';
 import 'dotenv/config';
 import { neon } from '@neondatabase/serverless';
 import userRoutes from './routes/user.routes.js';
 import historialRoutes from './routes/historial.routes.js'; // 👈 nuevo
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // const sql = neon(process.env.DATABASE_URL);
