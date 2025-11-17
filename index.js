@@ -36,6 +36,10 @@ app.get('/test-db', async (req, res) => {
 app.use('/user', userRoutes);
 app.use('/historial', historialRoutes); // 👈 esto agrega /historial
 
+app.get('/', (req, res) => {
+  res.send('MercadoLiteAPI funcionando correctamente!');
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
   console.log(`🚀 API escuchando en http://localhost:${PORT}`)
