@@ -21,8 +21,8 @@ app.get('/test-db', async (req, res) => {
 });
 
 // Montamos ambas "familias" de rutas
-app.use('/', userRoutes);
-app.use('/', historialRoutes); // 👈 esto agrega /historial
+app.use('/user', userRoutes);
+app.use('/historial', historialRoutes); // 👈 esto agrega /historial
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
