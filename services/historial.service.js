@@ -2,7 +2,7 @@
 import { client } from '../db.js';
 
 export async function obtenerHistorial(idUsuario) {
-  const rows = await client(
+  const result = await client.query(
     `SELECT 
         h.id,
         h.transferencia_id,
@@ -22,7 +22,7 @@ export async function obtenerHistorial(idUsuario) {
 
   const idNum = Number(idUsuario);
 
-  return rows.map((h) => {
+  return result.rows.map((h) => {
     const esSalida = Number(h.emisor_id) === idNum;
 
     return {
