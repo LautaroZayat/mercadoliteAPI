@@ -2,31 +2,20 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
-import { neon } from '@neondatabase/serverless';
+
+import { client } from './db.js';
 import userRoutes from './routes/user.routes.js';
-import historialRoutes from './routes/historial.routes.js'; // 👈 nuevo
+import historialRoutes from './routes/historial.routes.js';
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-// const sql = neon(process.env.DATABASE_URL);
-
-// app.get('/test-db', async (req, res) => {
-//   try {
-//     const r = await sql`SELECT NOW() as now`;
-//     res.json({ conectado: true, now: r[0].now });
-//   } catch (e) {
-//     console.error('DB error:', e);
-//     res.status(500).json({ conectado: false, error: e.message });
-//   }
-// }); INTENTO DE QUE FUNCIONE LA DB
-
-import { client } from './db.js'; // o la ruta donde tengas el Client
-
+// Ruta de prueba de DB
 app.get('/test-db', async (req, res) => {
   try {
-    const result = await client.query("SELECT NOW() as now");
+    const result = await client.query('SELECT NOW() as now');
     res.json({ conectado: true, now: result.rows[0].now });
   } catch (e) {
     console.error('DB error:', e);
@@ -34,15 +23,21 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-// Montamos ambas "familias" de rutas
+// Rutas principales
 app.use('/user', userRoutes);
-app.use('/historial', historialRoutes); // 👈 esto agrega /historial
+app.use('/historial', historialRoutes);
 
 app.get('/', (req, res) => {
   res.send('MercadoLiteAPI funcionando correctamente!');
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log(`🚀 API escuchando en http://localhost:${PORT}`)
-);
+// 🔹 Sólo levanta el server en local
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 API escuchando en http://localhost:${PORT}`);
+  });
+}
+
+// 🔹 Exporta la app para que Vercel la use
+export default app;
