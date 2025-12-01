@@ -142,9 +142,8 @@ export async function transferirSaldo({ origenId, destinoAlias, monto }) {
     transferencia,
   };
 }
-// services/user.service.js
-// ...
 
+// 🟢 SALDO
 export async function obtenerSaldo(idUsuario) {
   const result = await client.query(
     'SELECT saldo FROM usuarios WHERE id = $1',
@@ -167,3 +166,37 @@ export const obtenerUsuarioPorId = async (id) => {
   );
   return res.rows[0];
 };
+
+// 🟢 CAMBIAR CONTRASEÑA
+export async function cambiarContraseña(idUsuario, contraseñaActual, contraseñaNueva) {
+  // 1) Traer contraseña actual de la DB
+  const result = await client.query(
+    `SELECT "contraseña" FROM usuarios WHERE id = $1`,
+    [idUsuario]
+  );
+
+  if (result.rows.length === 0) {
+    const err = new Error('Usuario no encontrado');
+    err.status = 404;
+    throw err;
+  }
+
+  const contraseñaBD = result.rows[0]['contraseña'];
+
+  if (contraseñaBD !== contraseñaActual) {
+    const err = new Error('La contraseña actual es incorrecta');
+    err.status = 401;
+    throw err;
+  }
+
+  // 2) Actualizar contraseña
+  const updateResult = await client.query(
+    `UPDATE usuarios
+     SET "contraseña" = $2
+     WHERE id = $1
+     RETURNING id, nombre, email, alias, cbu, saldo`,
+    [idUsuario, contraseñaNueva]
+  );
+
+  return updateResult.rows[0];
+}

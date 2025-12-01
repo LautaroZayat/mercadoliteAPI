@@ -6,6 +6,7 @@ import {
   login,
   transferir,
   saldo,
+  cambiarPassword,
 } from '../controllers/user.controller.js';
 import { verifyToken } from '../middlewares/auth.middleware.js';
 
@@ -16,7 +17,10 @@ router.post('/registro', registro);
 router.post('/login', login);
 router.post('/transferir', verifyToken, transferir);
 
-// 🟢 nueva ruta protegida: ver saldo
+// 🟢 ruta protegida: ver saldo
 router.get('/saldo', verifyToken, saldo);
+
+// 🟢 ruta protegida: cambiar contraseña
+router.put('/cambiar-contrasena', verifyToken, cambiarPassword);
 
 export default router;

@@ -6,7 +6,7 @@ import {
   transferirSaldo,
   obtenerSaldo,
   obtenerUsuarioPorId,
-
+  cambiarContraseña,
 } from '../services/user.service.js';
 
 export const ping = (req, res) => {
@@ -97,16 +97,12 @@ export const transferir = async (req, res) => {
   }
 };
 
-// controllers/user.controller.js
-// ...
-
 // SALDO
 export const saldo = async (req, res) => {
   try {
     const idUsuario = req.userId; // viene del token (verifyToken)
 
     const saldoActual = await obtenerSaldo(idUsuario);
-
     const usuario = await obtenerUsuarioPorId(idUsuario);
     
     return res.json({
@@ -118,6 +114,34 @@ export const saldo = async (req, res) => {
     });
   } catch (err) {
     console.error('❌ Error en /saldo:', err);
+    return res.status(err.status || 500).json({ error: err.message });
+  }
+};
+
+// CAMBIAR CONTRASEÑA
+export const cambiarPassword = async (req, res) => {
+  try {
+    const idUsuario = req.userId; // viene del token
+    const { contraseñaActual, contraseñaNueva } = req.body;
+
+    if (!contraseñaActual || !contraseñaNueva) {
+      return res.status(400).json({
+        error: 'Faltan campos: contraseñaActual y contraseñaNueva',
+      });
+    }
+
+    const usuarioActualizado = await cambiarContraseña(
+      idUsuario,
+      contraseñaActual,
+      contraseñaNueva
+    );
+
+    return res.json({
+      mensaje: 'Contraseña actualizada correctamente',
+      usuario: usuarioActualizado,
+    });
+  } catch (err) {
+    console.error('❌ Error en /cambiar-contraseña:', err);
     return res.status(err.status || 500).json({ error: err.message });
   }
 };
