@@ -143,6 +143,29 @@ export async function transferirSaldo({ origenId, destinoAlias, monto }) {
   };
 }
 
+//INGRESAR DINERO
+export async function ingresarDinero(idUsuario, monto) {
+  const montoNum = Number(monto);
+  if (isNaN(montoNum) || montoNum <= 0) {
+    const err = new Error('El monto debe ser mayor a 0');
+    err.status = 400;
+    throw err;
+  }
+
+  const result = await client.query(
+    'UPDATE usuarios SET saldo = saldo + $2 WHERE id = $1 RETURNING id, saldo',
+    [idUsuario, montoNum]
+  );
+
+  if (result.rows.length === 0) {
+    const err = new Error('Usuario no encontrado');
+    err.status = 404;
+    throw err;
+  }
+
+  return result.rows[0];
+}
+
 // 🟢 SALDO
 export async function obtenerSaldo(idUsuario) {
   const result = await client.query(

@@ -7,6 +7,7 @@ import {
   obtenerSaldo,
   obtenerUsuarioPorId,
   cambiarContraseña,
+  ingresarDinero,
 } from '../services/user.service.js';
 
 export const ping = (req, res) => {
@@ -93,6 +94,28 @@ export const transferir = async (req, res) => {
       ...resultado,
     });
   } catch (err) {
+    return res.status(err.status || 500).json({ error: err.message });
+  }
+};
+
+// INGRESAR
+export const ingresar = async (req, res) => {
+  try {
+    const idUsuario = req.userId; // viene del token
+    const { monto } = req.body;
+
+    if (!monto || monto <= 0) {
+      return res.status(400).json({ error: 'Monto inválido' });
+    }
+
+    const usuarioActualizado = await ingresarDinero(idUsuario, monto);
+
+    return res.json({
+      mensaje: `Se agregaron $${monto} a tu cuenta`,
+      saldo: usuarioActualizado.saldo,
+    });
+  } catch (err) {
+    console.error('❌ Error en /ingresar:', err);
     return res.status(err.status || 500).json({ error: err.message });
   }
 };
